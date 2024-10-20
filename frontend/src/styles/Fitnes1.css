@@ -1,0 +1,358 @@
+/* src/styles/Fitnes1.css */
+.fitnes1-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #29130A;
+  color: #fff;
+}
+
+.tab-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 60px;
+  background-color: #F36963;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  box-sizing: border-box;
+  z-index: 999;
+}
+
+.hamburger-icon {
+  font-size: 30px;
+  cursor: pointer;
+  color: #000;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.3s;
+}
+
+.hamburger-icon:hover,
+.hamburger-icon.active {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.profile-icon {
+  font-size: 24px;
+  color: #000;
+  cursor: pointer;
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.4));
+}
+
+.profile-icon:hover {
+  opacity: 0.8;
+}
+
+.sidebar {
+  position: fixed;
+  top: 60px;
+  left: -310px;
+  width: 250px;
+  height: calc(100% - 60px);
+  background-color: #F36963;
+  transition: left 0.3s ease-in-out;
+  z-index: 998;
+  padding: 30px;
+  overflow-y: auto;
+}
+
+.sidebar.open {
+  left: 0;
+}
+
+.sidebar ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar li {
+  margin-bottom: 20px;
+}
+
+.sidebar li a {
+  display: flex;
+  align-items: center;
+  color: #fff;
+  text-decoration: none;
+  padding: 10px;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+}
+
+.sidebar li a:hover {
+  background-color: transparent;
+}
+
+.sidebar li a span {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+}
+
+.sidebar li a:hover span {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.sidebar li svg {
+  margin-right: 10px;
+  font-size: 18px;
+}
+
+.fitnes1-container h1 {
+  font-size: 24px;
+  margin-bottom: 20px;
+  margin-top: 80px;
+  text-align: center;
+}
+
+.fitnes1-container p {
+  font-size: 16px;
+  line-height: 1.5;
+  margin-bottom: 20px;
+  text-align: center;
+  padding: 0 20px;
+}
+
+.video-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 0 20px;
+}
+
+.video-item {
+  width: 100%;
+  max-width: 560px;
+  padding: 20px;
+  margin-bottom: 20px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.video-item h2 {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.video-item p {
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.video-wrapper {
+  position: relative;
+  padding-bottom: 56.25%;
+  height: 0;
+  overflow: hidden;
+}
+
+.video-wrapper iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+@media screen and (min-width: 768px) {
+  .video-container {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .video-item {
+    width: 48%;
+    margin-bottom: 0;
+  }
+}
+
+.back-button {
+  display: block;
+  width: 200px;
+  margin: auto;
+  padding: 10px 20px;
+  background-color: #f36963;
+  color: #fff;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+}
+
+.back-button:hover {
+  background-color: #e55b52;
+}
+
+.description {
+  margin-bottom: 20px;
+  padding: 0 20px;
+  text-align: center;
+}
+
+.description p {
+  font-size: 16px;
+  line-height: 1.5;
+  margin-bottom: 5px;
+}
+
+.description p:last-child {
+  margin-bottom: 0;
+}
+
+.camera-feed-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.camera-feed {
+  width: 100%;
+  padding-bottom: 56.25%; /* 16:9のアスペクト比 */
+  position: relative;
+  overflow: hidden;
+  border: 5px solid #fff;
+  border-radius: 10px;
+}
+
+.camera-feed canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.start-button,
+.stop-button {
+  display: block;
+  margin: 20px auto;
+  padding: 10px 20px;
+  background-color: #f36963;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.start-button:hover,
+.stop-button:hover {
+  background-color: #e55b52;
+}
+
+.stop-button {
+  margin-top: 20px;
+}
+
+/* iframe のスタイリング */
+.camera-feed iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border: none;
+}
+
+/* 完了メッセージのスタイリング */
+.complete-message {
+  background-color: rgba(0, 0, 0, 0.7);
+  color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  margin-top: 20px;
+}
+
+.complete-message h2 {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.complete-message p {
+  font-size: 16px;
+  margin-bottom: 20px;
+}
+
+.complete-message button {
+  background-color: #4CAF50;
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+}
+
+.complete-message button:hover {
+  background-color: #45a049;
+}
+
+/* ボタンのスタイリングを統一 */
+.start-button,
+.stop-button,
+.complete-message button {
+  display: block;
+  margin: 20px auto;
+  padding: 10px 20px;
+  background-color: #f36963;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+}
+
+.start-button:hover,
+.stop-button:hover,
+.complete-message button:hover {
+  background-color: #e55b52;
+}
+
+/* カメラが開いているときのコンテナスタイル */
+.video-container.camera-open {
+  background-color: rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  border-radius: 10px;
+  margin-top: 20px;
+}
+
+/* レスポンシブデザインの改善 */
+@media screen and (max-width: 768px) {
+  .camera-feed-wrapper {
+    width: 100%;
+  }
+
+  .camera-feed {
+    padding-bottom: 75%; /* 4:3のアスペクト比 - モバイルデバイスに適している場合があります */
+  }
+
+  .start-button,
+  .stop-button,
+  .complete-message button {
+    width: 100%;
+    max-width: 300px;
+  }
+}

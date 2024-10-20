@@ -1,0 +1,121 @@
+/* src/styles/LoginForm.css */
+.login-form-container {
+  display: flex;
+  height: 100vh;
+  background-color: #1F2834;
+}
+
+.logo-container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #fff;
+}
+
+.logo {
+  width: 400px;
+}
+
+.login-form {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #29130A;
+}
+
+.form-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 350px;
+  height: 400px;
+  background-color: #2b3645;
+  border-radius: 10px;
+}
+
+.form-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px;
+  color: #fff;
+}
+
+h2 {
+  margin-bottom: 20px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #2b3645;
+  color: #fff;
+}
+
+button {
+  width: 100%;
+  padding: 10px;
+  background-color: #F36963;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.forgot-password {
+  margin-top: 15px;
+}
+
+.forgot-password a {
+  color: #fff;
+  text-decoration: none;
+}
+
+.forgot-password a:hover {
+  text-decoration: underline;
+  color: #F369
+}
+
+.create-account {
+  margin-top: 10px;
+}
+
+.create-account a {
+  color: #fff;
+  text-decoration: none;
+}
+
+.create-account a:hover {
+  color: #F36963;
+}
+
+.login-form button {
+  padding: 10px;
+  background-color: #F36963;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.login-form button:hover {
+  background-color: #d55a52;
+}
+
+.error-message {
+  color: red;
+  margin-top: 10px;
+}
