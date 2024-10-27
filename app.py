@@ -9,6 +9,7 @@ import pandas as pd
 import time
 from components.pose_estimations import PoseEstimator, available_poses
 from flask_cors import CORS
+from PIL import Image, ImageDraw, ImageFont
 
 app = Flask(__name__)
 CORS(app)
@@ -48,17 +49,43 @@ def release_camera():
         camera.release()
         camera = None
 
+def draw_japanese_text(img, text, position, font_path, font_size=32, color=(255, 255, 255)):
+    # OpenCV画像をPIL画像に変換
+    img_pil = Image.fromarray(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
+    
+    # 描画用のオブジェクトを作成
+    draw = ImageDraw.Draw(img_pil)
+    
+    # フォントを読み込む
+    font = ImageFont.truetype(font_path, font_size)
+    
+    # テキストを描画（縁取り効果を追加）
+    # 黒い縁取り
+    outline_color = (0, 0, 0)
+    for offset in [(1, 1), (-1, -1), (-1, 1), (1, -1)]:
+        pos = (position[0] + offset[0], position[1] + offset[1])
+        draw.text(pos, text, font=font, fill=outline_color)
+    
+    # メインのテキスト
+    draw.text(position, text, font=font, fill=color)
+    
+    # PIL画像をOpenCV画像に戻す
+    return cv2.cvtColor(np.array(img_pil), cv2.COLOR_RGB2BGR)
+
 def generate_frames():
     global session_data, selected_pose, stop_generation, camera
     last_frame_time = time.time()
     
-    print("Starting generate_frames")  # デバッグ用
+    # 日本語フォントのパス
+    font_path = r"C:\Users\81809\Documents\学校\卒研\FlaskIntoReactTest\yolotest\fonts\NotoSansJP-Regular.ttf"
+    
+    print("Starting generate_frames")
     
     if not initialize_camera():
         print("Failed to initialize camera")
         return
 
-    print(f"Camera initialized successfully, selected_pose: {selected_pose}")  # デバッグ用
+    print(f"Camera initialized successfully, selected_pose: {selected_pose}")
     
     while not stop_generation:
         current_time = time.time()
@@ -67,43 +94,65 @@ def generate_frames():
         if elapsed_time >= FRAME_INTERVAL:
             success, frame = camera.read()
             if not success:
-                print("Failed to read frame from camera")  # デバッグ用
+                print("Failed to read frame from camera")
                 break
             else:
-                print("Frame read successfully")  # デバッグ用
                 # YOLOv8による推論を実行
                 results = model(frame)
-
-                # 結果を描画
                 annotated_frame = results[0].plot()
-
+                
                 # 骨格データを抽出し整理
                 skeleton_data = []
                 timestamp = datetime.now().timestamp()
-                stop_recording = False
                 
                 for result in results:
                     for pose in result.keypoints.data:
                         organized_data = pose_estimator.organize_skeleton_data(pose.tolist(), timestamp)
                         skeleton_data.append(organized_data)
 
-                        # 選択された姿勢タイプに応じて適切な判定メソッドを呼び出す
-                        print(f"Checking pose type: {selected_pose}")  # デバッグ用
-                        if selected_pose == 'right_hand_raised':
+                        if selected_pose == 'neck_flexion':
+                            pose_result = pose_estimator.neck_flexion_checker.assess_neck_flexion_pose(organized_data['keypoints'])
+                            
+                            # 日本語テキストを描画
+                            message = pose_result.get("message", "")
+                            annotated_frame = draw_japanese_text(
+                                annotated_frame,
+                                message,
+                                (10, 30),
+                                font_path,
+                                font_size=32,
+                                color=(255, 255, 255)
+                            )
+                            
+                            if pose_result.get("status") == "COMPLETE":
+                                yield (b'--frame\r\n'
+                                      b'Content-Type: text/plain\r\n\r\n'
+                                      b'COMPLETE\r\n')
+                                return
+
+                        elif selected_pose == 'right_hand_raised':
                             stop_recording = pose_estimator.check_pose(organized_data, current_time)
-                        elif selected_pose == 'neck_flexion':
-                            stop_recording = pose_estimator.check_neck_flexion(organized_data['keypoints'])
+                            if stop_recording:
+                                yield (b'--frame\r\n'
+                                       b'Content-Type: text/plain\r\n\r\n'
+                                       b'COMPLETE\r\n')
+                                return
+
                         elif selected_pose == 'neck_rotation':
                             stop_recording = pose_estimator.check_neck_rotation(organized_data['keypoints'])
+                            if stop_recording:
+                                yield (b'--frame\r\n'
+                                       b'Content-Type: text/plain\r\n\r\n'
+                                       b'COMPLETE\r\n')
+                                return
+
                         elif selected_pose == 'neck_extension':
                             stop_recording = pose_estimator.check_neck_extension(organized_data['keypoints'])
-
-                if stop_recording:
-                    print(f"Detected {available_poses.get(selected_pose, 'unknown pose')}. Stopping video.")
-                    yield (b'--frame\r\n'
-                           b'Content-Type: text/plain\r\n\r\n'
-                           b'COMPLETE\r\n')
-                    break
+                            if stop_recording:
+                                yield (b'--frame\r\n'
+                                       b'Content-Type: text/plain\r\n\r\n'
+                                       b'COMPLETE\r\n')
+                                return
 
                 # セッションデータに追加
                 session_data.extend(skeleton_data)
@@ -112,39 +161,34 @@ def generate_frames():
                     # JPEGにエンコード
                     ret, buffer = cv2.imencode('.jpg', annotated_frame)
                     if not ret:
-                        print("Failed to encode frame")  # デバッグ用
+                        print("Failed to encode frame")
                         continue
                     
                     frame = buffer.tobytes()
-                    print("Frame encoded successfully")  # デバッグ用
-
                     last_frame_time = current_time
 
                     yield (b'--frame\r\n'
                            b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
                 except Exception as e:
-                    print(f"Error encoding frame: {e}")  # デバッグ用
+                    print(f"Error encoding frame: {e}")
         else:
             time.sleep(max(0, FRAME_INTERVAL - elapsed_time))
-
-    print("Exiting generate_frames")  # デバッグ用
 
 @app.route('/video_feed')
 def video_feed():
     global stop_generation
     stop_generation = False
-    print("Received video_feed request")  # デバッグ用
+    print("Received video_feed request")
     try:
         if initialize_camera():
-            print("Camera initialized in video_feed")  # デバッグ用
+            print("Camera initialized in video_feed")
             return Response(generate_frames(),
                           mimetype='multipart/x-mixed-replace; boundary=frame')
         return jsonify({'error': 'Failed to initialize camera'}), 500
     except Exception as e:
-        print(f"Error in video_feed: {str(e)}")  # デバッグ用
-        traceback.print_exc()  # スタックトレースを出力
+        print(f"Error in video_feed: {str(e)}")
+        traceback.print_exc()
         return jsonify({'error': 'Error starting video feed'}), 500
-
 
 @app.route('/set_pose', methods=['POST'])
 def set_pose():
@@ -153,6 +197,10 @@ def set_pose():
         pose_type = request.json.get('pose_type')
         if pose_type:
             selected_pose = pose_type
+            # 新しいポーズが設定されたときに、関連するチェッカーをリセット
+            if pose_type == 'neck_flexion':
+                pose_estimator.neck_flexion_checker.reset()
+
             print(f"Pose type set to: {pose_type}")
             return jsonify({
                 'message': f'Pose set to {available_poses.get(pose_type, "unknown pose")}',
