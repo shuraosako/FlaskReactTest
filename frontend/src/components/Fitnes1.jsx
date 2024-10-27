@@ -1,17 +1,48 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import '../styles/Fitnes1.css';
 import { HomeOutlined, DashboardOutlined, CalendarOutlined, UserOutlined } from '@ant-design/icons';
 import axios from 'axios';
 
 const Fitnes1 = () => {
+  const navigate = useNavigate();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isCameraOpen, setIsCameraOpen] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
   const iframeRef = useRef(null);
+  const sidebarRef = useRef(null);  // サイドバー用のref
+  const hamburgerRef = useRef(null); 
+
+  useEffect(() => {
+    // クリックイベントのハンドラー
+    const handleClickOutside = (event) => {
+      if (isSidebarOpen && 
+          sidebarRef.current && 
+          hamburgerRef.current &&
+          !sidebarRef.current.contains(event.target) &&
+          !hamburgerRef.current.contains(event.target)) {
+        setIsSidebarOpen(false);
+      }
+    };
+        // イベントリスナーの追加
+        document.addEventListener('mousedown', handleClickOutside);
+        document.addEventListener('touchstart', handleClickOutside);
+    
+        // クリーンアップ
+        return () => {
+          document.removeEventListener('mousedown', handleClickOutside);
+          document.removeEventListener('touchstart', handleClickOutside);
+        };
+      }, [isSidebarOpen]);
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
+  };
+
+  const handleNavigation = (path) => {
+    console.log('Navigating to:', path); // デバッグ用
+    navigate(path);
+    setIsSidebarOpen(false);
   };
 
   const startCamera = () => {
@@ -65,6 +96,7 @@ const Fitnes1 = () => {
       {/* Tab Bar */}
       <div className="tab-bar">
         <div
+        ref={hamburgerRef}
           className={`hamburger-icon ${isSidebarOpen ? 'active' : ''}`}
           onClick={toggleSidebar}
         >
@@ -76,12 +108,19 @@ const Fitnes1 = () => {
       </div>
 
       {/* Sidebar */}
-      <div className={`sidebar ${isSidebarOpen ? 'open' : ''}`}>
+      <div 
+      ref = {sidebarRef}
+      className={`sidebar ${isSidebarOpen ? 'open' : ''}`}>
         <ul>
-          <li><HomeOutlined /> Home</li>
-          <li><DashboardOutlined /> Dashboard</li>
-          <li><CalendarOutlined /> Calendar</li>
-          <li><UserOutlined /> Profile</li>
+          <li onClick={() => handleNavigation('/dashboard')} style={{ cursor: 'pointer' }}>
+            <DashboardOutlined /> Dashboard
+          </li>
+          <li onClick={() => handleNavigation('/calendar')} style={{ cursor: 'pointer' }}>
+            <CalendarOutlined /> Calendar
+          </li>
+          <li onClick={() => handleNavigation('/profile')} style={{ cursor: 'pointer' }}>
+            <UserOutlined /> Profile
+          </li>
         </ul>
       </div>
 
@@ -125,9 +164,6 @@ const Fitnes1 = () => {
             ></iframe>
           </div>
         </div>
-      </div>
-
-      <div>
       </div>
 
       {/* Camera and Actions */}
