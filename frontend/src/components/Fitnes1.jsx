@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import '../styles/Fitnes1.css';
 import { HomeOutlined, DashboardOutlined, CalendarOutlined, UserOutlined } from '@ant-design/icons';
@@ -17,7 +17,7 @@ const Fitnes1 = () => {
   const startCamera = () => {
     setIsCameraOpen(true);
     if (iframeRef.current) {
-      iframeRef.current.src = 'http://127.0.0.1:5000/video_feed';  // Flaskサーバーのカメラフィードを表示
+      iframeRef.current.src = 'http://127.0.0.1:5000/video_feed';
     }
   };
 
@@ -27,7 +27,7 @@ const Fitnes1 = () => {
       iframeRef.current.src = '';  // カメラフィードを停止
     }
     try {
-      await axios.post('http://127.0.0.1:5000/stop_video');  // Flaskの`/stop_video`エンドポイントを呼び出してカメラを停止
+      await axios.post('http://127.0.0.1:5000/stop_video');
       console.log('Video stopped');
     } catch (error) {
       console.error('Error stopping video:', error);
@@ -37,7 +37,7 @@ const Fitnes1 = () => {
 
   const saveSessionData = async () => {
     try {
-      const response = await axios.post('http://127.0.0.1:5000/stop_and_save');  // Flaskの`/stop_and_save`エンドポイントを呼び出してセッションデータを保存
+      const response = await axios.post('http://127.0.0.1:5000/stop_and_save');
       console.log(response.data.message);
       alert('セッションデータが保存されました。');
     } catch (error) {
@@ -53,7 +53,7 @@ const Fitnes1 = () => {
     }
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     window.addEventListener('message', handleMessage);
     return () => {
       window.removeEventListener('message', handleMessage);
@@ -127,6 +127,9 @@ const Fitnes1 = () => {
         </div>
       </div>
 
+      <div>
+      </div>
+
       {/* Camera and Actions */}
       <div className={`video-container ${isCameraOpen ? 'camera-open' : ''}`}>
         {isComplete ? (
@@ -146,9 +149,10 @@ const Fitnes1 = () => {
             <div className="camera-feed">
               <iframe
                 ref={iframeRef}
+                src="http://127.0.0.1:5000/video_feed"
                 title="Video Feed"
-                width="640"
-                height="480"
+                width="100%"
+                height="100%"
               ></iframe>
             </div>
             <button className="stop-button" onClick={() => {
@@ -164,7 +168,6 @@ const Fitnes1 = () => {
           </button>
         )}
       </div>
-      <iframe ref={iframeRef} src={isCameraOpen ? 'http://127.0.0.1:5000/video_feed' : ''} width="600" height="400" title="Camera Feed" />
     </div>
   );
 };
