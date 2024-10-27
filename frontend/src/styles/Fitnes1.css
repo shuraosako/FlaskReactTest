@@ -356,3 +356,102 @@
     max-width: 300px;
   }
 }
+
+.exercise-selection {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  padding: 20px;
+  margin-top: 20px;
+}
+
+.exercise-card {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.exercise-card h2 {
+  color: #fff;
+  font-size: 1.5rem;
+  margin: 0;
+}
+
+.exercise-card p {
+  color: #fff;
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.exercise-card .video-wrapper {
+  position: relative;
+  padding-bottom: 56.25%;
+  height: 0;
+  overflow: hidden;
+  border-radius: 5px;
+  margin: 10px 0;
+}
+
+.exercise-card .video-wrapper iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.exercise-card .start-button {
+  background-color: #f36963;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s;
+  font-weight: bold;
+}
+
+.exercise-card .start-button:hover {
+  background-color: #e55b52;
+}
+
+.complete-message {
+  text-align: center;
+  padding: 20px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  margin: 20px;
+}
+
+.complete-message h2 {
+  color: #fff;
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+.complete-message p {
+  color: #fff;
+  margin-bottom: 20px;
+}
+
+.complete-message button {
+  background-color: #f36963;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s;
+  font-weight: bold;
+}
+
+.complete-message button:hover {
+  background-color: #e55b52;
+}

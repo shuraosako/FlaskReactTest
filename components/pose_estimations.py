@@ -1,9 +1,8 @@
-# File: C:\Users\81809\Documents\学校\卒研\test-1\yolotest\components\pose_estimations.py
-
 from datetime import datetime
 import math
 from collections import deque
 from components.list.necklist.right_hand_raised import RightHandRaised
+from components.list.necklist.neck_flexion import NeckFlexion  # 既存のクラスをインポート
 
 class PoseEstimator:
     def __init__(self):
@@ -13,8 +12,10 @@ class PoseEstimator:
             'left_wrist', 'right_wrist', 'left_hip', 'right_hip',
             'left_knee', 'right_knee', 'left_ankle', 'right_ankle'
         ]
+        # 各判定クラスのインスタンスを作成
         self.right_hand_raised_checker = RightHandRaised()
-        self.flexion_history = []  # 首の屈曲
+        self.neck_flexion_checker = NeckFlexion()  # 修正: 正しいNeckFlexionクラスのインスタンス化
+        
         self.lateral_flexion_history = deque(maxlen=90)  # 首の側屈3秒間
         self.LATERAL_FLEXION_DURATION = 3  # 首の側屈
         self.rotation_history = deque(maxlen=90)  # 首の回旋3秒間
@@ -22,14 +23,14 @@ class PoseEstimator:
         self.extension_history = deque(maxlen=90)  # 首の伸展3秒間
         self.EXTENSION_DURATION = 3  # 首の伸展
 
-
     #右手上げ
     def check_pose(self, organized_data, current_time):
         return self.right_hand_raised_checker.check_pose(organized_data, current_time)
     
     #首の屈曲
-    def check_neck_flexion(self, keypoints, tolerance=0.1):
-        return self.neck_flexion_checker.assess_neck_flexion_pose(keypoints, tolerance)
+    def check_neck_flexion(self, keypoints):
+        # 修正: assess_neck_flexion_poseメソッドを直接呼び出す
+        return self.neck_flexion_checker.assess_neck_flexion_pose(keypoints)
 
     #首の側屈
     def check_lateral_flexion(self, keypoints, threshold_angle=15):
